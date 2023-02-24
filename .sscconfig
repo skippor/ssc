@@ -1,0 +1,10 @@
+[name]
+host=127.0.0.1
+user=root
+pass=root
+port=22
+
+[test]
+host=0.0.0.0
+user=root
+pass=root

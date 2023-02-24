@@ -1,0 +1,42 @@
+#!/bin/sh
+
+readini() {
+    local conf="$1"
+    local section="$2"
+    local key="$3"
+
+    grep -A5 "\[${section}\]" $conf | sed -n "s/${key}=\(.*\)/\1/p"
+}
+
+conf=/root/.sscconfig
+
+name="$1"
+
+if [ ! -f "${conf}" -o -z "$name" ]; then
+    echo "param error"
+    exit 1
+fi
+
+host=`readini ${conf} ${name} host`
+user=`readini ${conf} ${name} user`
+pass=`readini ${conf} ${name} pass`
+port=`readini ${conf} ${name} port`
+
+[ -z "$port" ] && port=22
+
+case "$2" in
+"-g")
+    sshpass -p "${pass}" scp -P${port} "${user}@${host}:$3" "./"
+    ;;
+"-p")
+    sshpass -p "${pass}" scp -P${port} "$3" "${user}@${host}:/tmp/"
+    ;;
+"-v")
+    sshpass -v -p "${pass}" ssh -p${port} -o StrictHostKeyChecking=no "${user}@${host}"
+    ;;
+*)
+    sshpass -p "${pass}" ssh -p${port} -o StrictHostKeyChecking=no  "${user}@${host}"
+    ;;
+esac
+
+exit 0

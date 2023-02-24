@@ -1,0 +1,15 @@
+_comp_ssc () {
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    if [ "${prev}" == "ssc" ]; then
+        if [ ! -f /root/.sscconfig ]; then
+            COMPREPLY=( $(compgen -W "" -- ${cur}) )
+            return 1
+        fi
+        opts=`grep "\[" /root/.sscconfig | tr -d ][`
+            COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+    fi
+
+    return 0
+}
+complete -F _comp_ssc ssc
