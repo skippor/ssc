@@ -1,11 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
 readini() {
-    local conf="$1"
-    local section="$2"
-    local key="$3"
+    local file=$1
+    local section=$2
+    local key=$3
 
-    grep -A5 "\[${section}\]" $conf | sed -n "s/${key}=\(.*\)/\1/p"
+    sed -n "/^\[$section\]/,/^$/ {
+        /^[[:space:]]*$key[[:space:]]*=/ {
+            s/^[[:space:]]*//;s/[[:space:]]*=[[:space:]]*/=/;s/[[:space:]]*#.*$//;p
+        }
+    }" "$file"
 }
 
 conf=/root/.sscconfig
